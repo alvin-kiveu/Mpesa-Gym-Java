@@ -11,9 +11,11 @@ import java.sql.ResultSet;
 import javax.swing.JOptionPane;
 import java.net.URL;
 import java.net.HttpURLConnection;
-import java.nio.charset.StandardCharsets;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.DataOutputStream;
+import java.nio.charset.StandardCharsets;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -34,6 +36,7 @@ public class Payment extends javax.swing.JFrame {
     String month;
     String pack;
     String amount;
+    String phone;
 
     public Payment() {
         initComponents();
@@ -45,12 +48,12 @@ public class Payment extends javax.swing.JFrame {
     private void tablelord() {
         // getData();
         try {
-            String sql = "SELECT `mid` as 'Member ID', `month` as 'Month', `package` as 'Package', `amount` as 'Amount', `date` as 'Date' FROM `payment`";
+            String sql = "SELECT `mid` as 'Member ID', `month` as 'Month', `package` as 'Package', `amount` as 'Amount', `date` as 'Date', `phone` as 'Phone' FROM `payment`";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             tblpayment.setModel(net.proteanit.sql.DbUtils.resultSetToTableModel(rs));
             clear();
-
+            
         } catch (Exception e) {
             JOptionPane.showConfirmDialog(rootPane, e);
         }
@@ -62,6 +65,7 @@ public class Payment extends javax.swing.JFrame {
         month = cmbmonth.getSelectedItem().toString();
         pack = cmbpackage.getSelectedItem().toString();
         amount = txtamount.getText();
+        phone = txtphone.getText();
 
     }
 
@@ -70,6 +74,7 @@ public class Payment extends javax.swing.JFrame {
         txtamount.setText("");
         cmbmonth.setSelectedIndex(0);
         cmbpackage.setSelectedIndex(0);
+        txtphone.setText("");
 
     }
 
@@ -92,7 +97,7 @@ public class Payment extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         txtmid = new javax.swing.JTextField();
-        txtamount = new javax.swing.JTextField();
+        txtphone = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         cmbmonth = new javax.swing.JComboBox();
         txtmidsearch = new javax.swing.JTextField();
@@ -102,6 +107,8 @@ public class Payment extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         cmbpackage = new javax.swing.JComboBox();
+        txtamount = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -177,10 +184,10 @@ public class Payment extends javax.swing.JFrame {
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 120, 80, 20));
 
         jLabel3.setFont(new java.awt.Font("Elephant", 0, 14)); // NOI18N
-        jLabel3.setText("Amount :");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 190, -1, 30));
+        jLabel3.setText("Phone :");
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 220, -1, 30));
         jPanel1.add(txtmid, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 80, 220, -1));
-        jPanel1.add(txtamount, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 190, 220, -1));
+        jPanel1.add(txtphone, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 220, 220, -1));
 
         jButton1.setBackground(new java.awt.Color(0, 0, 153));
         jButton1.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
@@ -191,7 +198,7 @@ public class Payment extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 240, 130, 30));
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 250, 130, 30));
 
         cmbmonth.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "January", "February", "March", "April", "May", "Juny", "July", "Augest", "September", "Octomber", "November", "December" }));
         jPanel1.add(cmbmonth, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 120, 220, -1));
@@ -226,6 +233,17 @@ public class Payment extends javax.swing.JFrame {
         cmbpackage.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Select package" }));
         jPanel1.add(cmbpackage, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 150, 220, -1));
 
+        txtamount.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtamountActionPerformed(evt);
+            }
+        });
+        jPanel1.add(txtamount, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 190, 220, -1));
+
+        jLabel8.setFont(new java.awt.Font("Elephant", 0, 14)); // NOI18N
+        jLabel8.setText("Amount :");
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 190, -1, 30));
+
         jMenu1.setText("Print");
 
         jMenuItem2.setText("Print Table");
@@ -256,7 +274,7 @@ public class Payment extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -270,101 +288,92 @@ public class Payment extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         getData();
 
-        if (mid.isEmpty() || month.isEmpty() || pack.isEmpty() || amount.isEmpty()) {
+        if (mid.isEmpty() || month.isEmpty() || pack.isEmpty() || amount.isEmpty() || phone.isEmpty() ) {
             JOptionPane.showMessageDialog(rootPane, "Please fill in all fields before making a payment.");
             return; // Exit the method
-        }
+        }else{
+            try{
+                //DO API REQUEST
+                String consumerKey = "B2JNQ0jXldRaVNrSNf7PIhZCw8u6DUAE";
+                String consumerSecret = "vmDhsm56BY5Afqva";
+                String passKey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919";
+                String shortCode = "174379";
+                String phoneNumber = phone;
+                String accountNumber = "GYM-PAYMENT";
+                String callbackUrl = "https://api.umeskiasoftwares.com/callback";
+                
+                String apiUrl = "https://api.umeskiasoftwares.com/api/v1/mpesastk";
+                String jsonData = "{\n" +
+                        "\"consumerKey\": \"" + consumerKey + "\",\n" +
+                        "\"consumerSecret\": \"" + consumerSecret + "\",\n" +
+                        "\"shortCode\": \"" + shortCode + "\",\n" +
+                        "\"passKey\": \"" + passKey + "\",\n" +
+                        "\"amount\": \"" + phoneNumber + "\",\n" +
+                        "\"phoneNumber\": \"" + phoneNumber + "\",\n" +
+                        "\"accountReference\": \"" + accountNumber + "\",\n" +
+                        "\"callbackUrl\": \"" + callbackUrl + "\"\n" + // Fixed this line
+                        "}";
 
-        String consumerKey = "YOUR_CONSUMER_KEY"; // Replace with your app Consumer Key
-        String consumerSecret = "YOUR_CONSUMER_SECRET"; // Replace with your app Consumer Secret
-        String access_token_url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials";
+                URL url = new URL(apiUrl);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setDoOutput(true);
 
-        try {
-            String userCredentials = consumerKey + ":" + consumerSecret;
-            byte[] credentialsBytes = userCredentials.getBytes(StandardCharsets.UTF_8);
-            String base64Credentials = java.util.Base64.getEncoder().encodeToString(credentialsBytes);
+                try (DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream())) {
+                    byte[] input = jsonData.getBytes(StandardCharsets.UTF_8);
+                    outputStream.write(input, 0, input.length);
+                    outputStream.flush(); // Added this line to flush the stream
+                }
 
-            URL tokenUrl = new URL(access_token_url);
-            HttpURLConnection tokenConnection = (HttpURLConnection) tokenUrl.openConnection();
-            tokenConnection.setRequestMethod("GET");
-            tokenConnection.setRequestProperty("Authorization", "Basic " + base64Credentials);
+                int responseCode = connection.getResponseCode();
+            
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String inputLine;
+                    StringBuilder response = new StringBuilder();
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(tokenConnection.getInputStream()));
-            String inputLine;
-            StringBuilder response = new StringBuilder();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            JSONObject jsonResponse = new JSONObject(response.toString());
-            String access_token = jsonResponse.getString("access_token");
-
-            // Now you have the access_token, proceed to insert payment data into the database
-            String q = "INSERT INTO `payment`(`mid`, `month`, `package`, `amount`, `date`) VALUES (?, ?, ?, ?, ?)";
-            pst = conn.prepareStatement(q);
-            pst = conn.prepareStatement(q);
-            pst.setString(1, mid);
-            pst.setString(2, month);
-            pst.setString(3, pack);
-            pst.setString(4, amount);
-           // pst.setString(5, Home.getDate());// Assuming Home.getDate() returns the date
-
-            pst.execute();
-            JOptionPane.showMessageDialog(rootPane, "Payment Recorded successfully");
-
-            // Trigger the STK push here
-            triggerSTKPush(access_token);
-
-            tablelord();
-        } catch (Exception e) {
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    in.close();
+                   
+                    String responseData = response.toString();
+                    JSONObject jsonResponse = new JSONObject(responseData);
+                    String resultCode = jsonResponse.getString("ResultCode");
+                    if(resultCode == "200"){
+                            try {   
+                               String q = "INSERT INTO `payment`(`mid`, `month`, `package`, `amount`, `date`, `phone`) VALUES (?, ?, ?, ?, NOW(), ?)";
+                               pst = conn.prepareStatement(q);
+                               pst.setString(1, mid);
+                               pst.setString(2, month);
+                               pst.setString(3, pack);
+                               pst.setString(4, amount);
+                               pst.setString(5, phone);
+                               pst.execute();
+                              String successMessage = jsonResponse.getString("successMessage");
+                              JOptionPane.showMessageDialog(rootPane, successMessage);
+                               tablelord();
+                          } catch (Exception e) {
+                              JOptionPane.showMessageDialog(rootPane, e);
+                           }
+                    }else{     
+                    String errorMessage = jsonResponse.getString("errorMessage");
+                    JOptionPane.showMessageDialog(rootPane, errorMessage);
+                    }
+                 } else {
+                   System.out.println("Error: " + responseCode);
+              
+                  JOptionPane.showMessageDialog(rootPane, "Error on the Request, STATUS CODE : " + responseCode);
+                 }
+            } catch (Exception e) {
             JOptionPane.showMessageDialog(rootPane, e);
         }
-    }
-
-    private void triggerSTKPush(String access_token) {
-        String processrequestUrl = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
-        String callbackurl = "https://1c95-105-161-14-223.ngrok-free.app/MPEsa-Daraja-Api/callback.php";
-        String passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919";
-        String BusinessShortCode = "174379";
-        String Timestamp = java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(java.time.LocalDateTime.now());
-        String Password = java.util.Base64.getEncoder().encodeToString((BusinessShortCode + passkey + Timestamp).getBytes(StandardCharsets.UTF_8));
-        String phone = "254768168060"; // Phone number to receive the stk push
-        String money = "1";
-        String PartyA = phone;
-        String PartyB = BusinessShortCode;
-        String AccountReference = "UMESKIA SOFTWARES";
-        String TransactionDesc = "stkpush test";
-        String Amount = money;
-
-        try {
-            URL url = new URL(processrequestUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Authorization", "Bearer " + access_token);
-            connection.setDoOutput(true);
-
-            String jsonInputString = "{\"BusinessShortCode\":\"" + BusinessShortCode + "\",\"Password\":\"" + Password + "\",\"Timestamp\":\"" + Timestamp + "\",\"TransactionType\":\"CustomerPayBillOnline\",\"Amount\":\"" + Amount + "\",\"PartyA\":\"" + PartyA + "\",\"PartyB\":\"" + PartyB + "\",\"PhoneNumber\":\"" + PartyA + "\",\"CallBackURL\":\"" + callbackurl + "\",\"AccountReference\":\"" + AccountReference + "\",\"TransactionDesc\":\"" + TransactionDesc + "\"}";
-
-            try (java.io.OutputStream os = connection.getOutputStream()) {
-                byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
-                StringBuilder response = new StringBuilder();
-                String responseLine;
-                while ((responseLine = br.readLine()) != null) {
-                    response.append(responseLine.trim());
-                }
-                System.out.println(response.toString()); // Print the STK push response
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            
         }
     }
+
+    
 
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -391,6 +400,10 @@ public class Payment extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void txtamountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtamountActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtamountActionPerformed
 
     private void comboLoad() {
 
@@ -459,6 +472,7 @@ public class Payment extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
@@ -472,5 +486,6 @@ public class Payment extends javax.swing.JFrame {
     private javax.swing.JTextField txtamount;
     private javax.swing.JTextField txtmid;
     private javax.swing.JTextField txtmidsearch;
+    private javax.swing.JTextField txtphone;
     // End of variables declaration//GEN-END:variables
 }

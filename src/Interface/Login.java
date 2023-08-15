@@ -60,7 +60,6 @@ ResultSet rs=null;
         jPanel2.setBackground(new java.awt.Color(255, 255, 0));
         jPanel2.setForeground(new java.awt.Color(255, 255, 255));
 
-        jLabel3.setIcon(new javax.swing.ImageIcon("C:\\Users\\Admin\\OneDrive\\Desktop\\School\\GymProject\\images\\usiu.png")); // NOI18N
         jLabel3.setText("jLabel3");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -187,6 +186,8 @@ ResultSet rs=null;
                     .addComponent(login, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(86, Short.MAX_VALUE))
         );
+
+        jLabel4.getAccessibleContext().setAccessibleName("USIU Fitness Centre");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
